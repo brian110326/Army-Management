@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>휴가 신청 내역</title>
+    <!-- ✅ Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+
+<div class="container mt-5">
+    <h2 class="mb-4 text-center">전체 군인 휴가 신청 내역</h2>
+
+    <form class="row g-3 mb-4 justify-content-center"
+          th:action="@{/leave-requests}"
+          method="get">
+
+        <!-- 이름 검색 -->
+        <div class="col-md-4 col-lg-3">
+            <input type="text"
+                   class="form-control"
+                   name="soldierName"
+                   placeholder="이름 검색"
+                   th:value="${param.soldierName}">
+        </div>
+
+        <!-- 상태 선택 -->
+        <div class="col-md-4 col-lg-3">
+            <select class="form-select" name="status" th:value="${param.status}">
+                <option th:selected="${param.status == null or param.status == ''}">
+                    전체 상태
+                </option>
+                <option th:each="status : ${statusList}"
+                        th:value="${status}" th:text="${status}"
+                        th:selected="${status.equals(statusCurrent)}">
+                    승인
+                </option>
+            </select>
+        </div>
+
+        <!-- 검색 버튼 -->
+        <div class="col-md-2 col-lg-1 d-grid">
+            <button type="submit" class="btn btn-primary">검색</button>
+        </div>
+    </form>
+
+    <table class="table table-bordered table-striped table-hover align-middle text-center">
+        <thead class="table-dark">
+        <tr>
+            <th>이름</th>
+            <th>계급</th>
+            <th>소속</th>
+            <th>휴가 종류</th>
+            <th>시작일</th>
+            <th>종료일</th>
+            <th>상태</th>
+            <th>사유</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="leave : ${requests.content}">
+            <td th:text="${leave.soldierName}">이름</td>
+            <td th:text="${leave.soldierRank}">계급</td>
+            <td th:text="${leave.unitName}">소속</td>
+            <td th:text="${leave.leaveType}">휴가 종류</td>
+            <td th:text="${leave.startDate}">시작일</td>
+            <td th:text="${leave.endDate}">종료일</td>
+            <td>
+                <span th:text="${leave.leaveStatus}"
+                      th:classappend="${leave.leaveStatus.name() == '승인'} ? 'badge bg-success' :
+                                      (${leave.leaveStatus.name() == '반려'} ? 'badge bg-danger' : 'badge bg-secondary')">
+                    상태
+                </span>
+            </td>
+            <td th:text="${leave.reason}">사유</td>
+        </tr>
+        </tbody>
+    </table>
+
+
+    <nav th:if="${requests.totalPages > 1}" aria-label="LeaveRequest pagination">
+        <ul class="pagination justify-content-center">
+
+            <!-- 이전 블록 -->
+            <li class="page-item" th:if="${startPage > 0}">
+                <a class="page-link"
+                   th:href="@{/leave-requests(page=${startPage - 1},
+                                          size=${requests.size},
+                                          soldierName=${param.soldierName},
+                                          status=${param.status})}">
+                    이전
+                </a>
+            </li>
+
+            <!-- 페이지 번호들 -->
+            <li class="page-item"
+                th:each="i : ${#numbers.sequence(startPage, endPage)}"
+                th:classappend="${i == requests.number} ? 'active'">
+                <a class="page-link"
+                   th:href="@{/leave-requests(page=${i},
+                                          size=${requests.size},
+                                          soldierName=${param.soldierName},
+                                          status=${param.status})}"
+                   th:text="${i + 1}">1</a>
+            </li>
+
+            <!-- 다음 블록 -->
+            <li class="page-item" th:if="${endPage < requests.totalPages - 1}">
+                <a class="page-link"
+                   th:href="@{/leave-requests(page=${endPage + 1},
+                                          size=${requests.size},
+                                          soldierName=${param.soldierName},
+                                          status=${param.status})}">
+                    다음
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+    <div class="mt-4 d-flex gap-2">
+        <a th:href="@{/soldiers}" class="btn btn-success">군인 목록 조회</a>
+    </div>
+
+</div>
+
+</body>
+</html>
