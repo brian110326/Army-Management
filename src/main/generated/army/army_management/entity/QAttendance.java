@@ -26,6 +26,8 @@ public class QAttendance extends EntityPathBase<Attendance> {
 
     public final DateTimePath<java.time.LocalDateTime> checkOutTime = createDateTime("checkOutTime", java.time.LocalDateTime.class);
 
+    public final EnumPath<DutyType> dutyType = createEnum("dutyType", DutyType.class);
+
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
     public final QSoldier soldier;

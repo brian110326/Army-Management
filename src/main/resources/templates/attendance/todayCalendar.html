@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>군인 근무 출석 달력</title>
+
+    <!-- FullCalendar CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.4/index.global.min.css"
+          rel="stylesheet"/>
+
+</head>
+<body>
+
+<div class="container mt-5">
+    <h2 class="text-center mb-4">군인 근무 출석 달력</h2>
+    <div id="calendar"></div>
+</div>
+
+<!-- FullCalendar JS -->
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.4/index.global.min.js"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const calendarEl = document.getElementById('calendar');
+
+        const calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'dayGridMonth', // 월 단위 달력
+            locale: 'ko',                // 한국어 로케일
+            height: 'auto',
+
+            // 이벤트 데이터 로드하는 API 경로
+            events: function (fetchInfo, successCallback, failureCallback) {
+                // fetchInfo.start, fetchInfo.end는 Date 객체
+                // 이를 yyyy-MM-dd 형식 문자열로 바꿔서 요청 보내기
+
+                const startStr = fetchInfo.start.toISOString().substring(0, 10);
+                const endStr = fetchInfo.end.toISOString().substring(0, 10);
+
+                fetch(`/api/attendances?start=${startStr}&end=${endStr}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        // 서버에서 DutyEventDto 리스트가 JSON 배열로 옴
+                        // FullCalendar 이벤트 객체 형식에 맞게 가공 (title, start, end 등)
+
+                        const events = data.map(event => ({
+                            title: event.title,
+                            start: event.start, // ISO 문자열, ex) "2025-07-04T08:30:00"
+                            end: event.end      // optional
+                        }));
+
+                        successCallback(events);
+                    })
+                    .catch(err => failureCallback(err));
+            },
+
+            eventClick: function (info) {
+                alert(info.event.title + '\n시작: ' + info.event.start.toLocaleString());
+            }
+        });
+
+        calendar.render();
+    });
+</script>
+
+</body>
+</html>

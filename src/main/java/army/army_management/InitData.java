@@ -11,6 +11,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.Random;
 
 @Profile(value = "local")
 @Component
@@ -65,7 +67,7 @@ public class InitData {
                             // 병사 생성
                             for (int s = 0; s < 5; s++) {
                                 Soldier soldier = new Soldier();
-                                soldier.setName("병사_" + i + "_" + j + "_" + k + "_" + l + "_" + s);
+                                soldier.setName("이수현");
                                 soldier.setArmyNumber("19-123456");
                                 soldier.setUnit(company3);
                                 soldier.setBornDate(LocalDateTime.of(1990 + i, 1 + i,
@@ -94,6 +96,36 @@ public class InitData {
                 request.setReason("자동 생성 휴가 신청 #" + i);
 
                 em.persist(request);
+            }
+
+            Random random = new Random();
+            LocalDate startDate = LocalDate.of(2025, 7, 1);
+
+            for (long soldierId = 1; soldierId <= 20; soldierId++) {
+                // 병사 조회
+                Soldier soldier = em.find(Soldier.class, soldierId);
+                if (soldier == null) {
+                    continue; // 해당 ID 병사가 없으면 건너뜀
+                }
+
+                int workDays = 5 + random.nextInt(6); // 5~10일
+
+                for (int i = 0; i < workDays; i++) {
+                    int dayOffset = random.nextInt(31);
+                    LocalDate workDate = startDate.plusDays(dayOffset);
+
+                    LocalTime checkIn = LocalTime.of(8, random.nextInt(60));
+                    LocalTime checkOut = LocalTime.of(17 + random.nextInt(3), random.nextInt(60));
+
+                    Attendance attendance = new Attendance();
+                    attendance.setSoldier(soldier);
+                    attendance.setWorkDate(workDate);
+                    attendance.setCheckInTime(LocalDateTime.of(workDate, checkIn));
+                    attendance.setCheckOutTime(LocalDateTime.of(workDate, checkOut));
+                    attendance.setDutyType(DutyType.전투);
+
+                    em.persist(attendance);
+                }
             }
         }
     }

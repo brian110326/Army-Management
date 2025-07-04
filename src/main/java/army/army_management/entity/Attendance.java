@@ -23,6 +23,9 @@ public class Attendance {
 
     private LocalDate workDate;
 
+    @Enumerated(EnumType.STRING)
+    private DutyType dutyType;
+
     private LocalDateTime checkInTime;
 
     private LocalDateTime checkOutTime;
