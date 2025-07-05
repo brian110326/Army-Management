@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>근무 등록</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+</head>
+<body>
+<div class="container mt-5">
+    <h2 class="mb-4">근무 등록</h2>
+    <form th:action="@{/{id}/attendance/register(id=${id})}" method="post" th:object="${dto}">
+
+        <!-- soldierId를 hidden으로 전송 -->
+        <input type="hidden" th:field="*{soldierId}">
+
+        <div class="mb-3">
+            <label for="workDate" class="form-label">근무 날짜</label>
+            <input type="date" th:field="*{workDate}" class="form-control" id="workDate" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="dutyType" class="form-label">근무 유형</label>
+            <select th:field="*{dutyType}" class="form-select" id="dutyType" required>
+                <option value="" disabled selected>근무 유형 선택</option>
+                <option th:each="type : ${duties}"
+                        th:value="${type}" th:text="${type}"></option>
+            </select>
+        </div>
+
+        <!-- 출근 시간 (시간만) -->
+        <div class="mb-3">
+            <label for="checkInTimeOnly" class="form-label">출근 시간</label>
+            <input type="time" class="form-control" id="checkInTimeOnly" required>
+            <input type="hidden" th:field="*{checkInTime}" id="checkInTime">
+        </div>
+
+        <!-- 퇴근 시간 (시간만) -->
+        <div class="mb-3">
+            <label for="checkOutTimeOnly" class="form-label">퇴근 시간</label>
+            <input type="time" class="form-control" id="checkOutTimeOnly" required>
+            <input type="hidden" th:field="*{checkOutTime}" id="checkOutTime">
+        </div>
+
+        <button type="submit" class="btn btn-primary">등록</button>
+    </form>
+</div>
+
+
+<script>
+    function updateDateTimes() {
+        const date = document.getElementById("workDate").value;
+        const inTime = document.getElementById("checkInTimeOnly").value;
+        const outTime = document.getElementById("checkOutTimeOnly").value;
+
+        if (date && inTime) {
+            document.getElementById("checkInTime").value = `${date}T${inTime}`;
+        }
+        if (date && outTime) {
+            document.getElementById("checkOutTime").value = `${date}T${outTime}`;
+        }
+    }
+
+    document.getElementById("workDate").addEventListener("change", updateDateTimes);
+    document.getElementById("checkInTimeOnly").addEventListener("change", updateDateTimes);
+    document.getElementById("checkOutTimeOnly").addEventListener("change", updateDateTimes);
+</script>
+
+</body>
+</html>
