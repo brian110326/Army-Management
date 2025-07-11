@@ -8,6 +8,9 @@
 <body>
 <div class="container my-4">
 
+    <button onclick="logout()" class="btn btn-danger">로그아웃</button>
+
+
     <!-- 검색 폼 -->
     <form th:object="${condition}" method="get" action="#" class="row g-3 mb-4">
 
@@ -131,8 +134,8 @@
         <a th:href="@{/attendance/calendar}" class="btn btn-outline-info">오늘의 근무표</a>
     </div>
 
-
 </div>
+
 </body>
 </html>
 
