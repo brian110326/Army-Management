@@ -26,6 +26,7 @@ public class Soldier {
     private LocalDateTime bornDate;
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "soldier_rank")
     private Rank rank; // 계급
 
     @Enumerated(EnumType.STRING)
