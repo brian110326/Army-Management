@@ -12,7 +12,7 @@
 ### 🔧 기술 스택
 
 - **Java**, **Spring Boot**
-- **h2, MySQL 데이터메이스**
+- **h2, MySQL 데이터베이스**
 - **JPA (Hibernate)**
 - **QueryDSL**
 - **Thymeleaf**
