@@ -12,8 +12,9 @@
 ### 🔧 기술 스택
 
 - **Java**, **Spring Boot**
-- **h2**
+- **h2, MySQL 데이터메이스**
 - **JPA (Hibernate)**
+- **QueryDSL**
 - **Thymeleaf**
 - **FullCalendar.js**
 
